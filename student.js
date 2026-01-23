@@ -2,6 +2,9 @@ console.log("Yo Yo Yo");
 const http = require("http");
 const url = require("url");
 const fs = require("fs");
+const allGrades = require("./data/grades.js");
+console.log(allGrades);
+
 
 const navigation = () => {
   return (`<nav>
@@ -28,16 +31,10 @@ http.createServer((req, res) => {
   res.writeHead(200, "All good, Status 200", { "Content-type": "text/html" })
 
   if (currentPath === "/") {
-    fs.readFile("./content/navigation.html", (err, data) => {
-      if (err) {
-        res.write("Something went wrong")
-      } else {
-        res.write(data);
-      }
-      res.write(header("Bestest school"));
-      res.write(footer("homeFooter"));
-      res.end();
-    })
+    res.write(navigation());
+    res.write(header("Bestest school"));
+    res.write(footer("homeFooter"));
+    res.end();
   }
 
   if (currentPath === "/student") {
@@ -58,7 +55,8 @@ http.createServer((req, res) => {
   if (currentPath === "/grades") {
     res.write(navigation());
     res.write(header("Your grades:"));
-
+    res.write(`This is a page for all grades`);
+    allGrades.forEach((grade) => res.write(`<h4>${grade}</h4>`));
     if (searchTerm.grade === "allgrades") {
       fs.readFile("./content/grades.html", (err, data) => {
         if (err) {
@@ -72,7 +70,6 @@ http.createServer((req, res) => {
       });
     } else {
       res.write("No grades to show");
-      res.write(`<a href="/grades?grade=allgrades">All grades</a>`)
       res.write(footer("gradesFooter"));
       res.end();
     }
